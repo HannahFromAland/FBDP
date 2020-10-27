@@ -96,18 +96,20 @@ public class WordCount {
 
     
     }
-    public class CountSumReducer extends Reducer<Text, IntWritable, Text, IntWritable> {
-        private IntWritable result = new IntWritable();
+    public static class CountSumReducer extends Reducer<Text, IntWritable, Text, IntWritable> {
+    	private IntWritable result = new IntWritable();
 
-        public void reduce(Text key, Iterable<IntWritable> values, Context context)
-                throws IOException, InterruptedException {
-            int sum = 0;
-            for (IntWritable val : values) {
-                sum += val.get();
-            }
-            result.set(sum);
-            context.write(key, result);
-        }
+    	   public void reduce(Text key, Iterable<IntWritable> values, 
+    	                      Context context
+    	                      ) throws IOException, InterruptedException {
+    	     int sum = 0;
+    	     for (IntWritable val : values) {
+    	       sum += val.get();
+    	     }
+    	     result.set(sum);
+    	     context.write(key, result);
+
+    	   }
         
         
     }
@@ -139,7 +141,7 @@ public class WordCount {
         job1.setJarByClass(WordCount.class);
         // set mapper, reducer and combiner
         job1.setMapperClass(WordCountMapper.class);
-        job1.setCombinerClass(CountSumReducer.class);
+        //job1.setCombinerClass(CountSumReducer.class);
         job1.setReducerClass(CountSumReducer.class);
         // set the final type of output  
         job1.setInputFormatClass(TextInputFormat.class);
