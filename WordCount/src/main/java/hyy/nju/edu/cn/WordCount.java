@@ -84,8 +84,8 @@ public class WordCount {
             StringTokenizer itr = new StringTokenizer(line);
             while (itr.hasMoreTokens()) {
             	if(itr.nextToken().length()>=3) {
-            		word.set(itr.nextToken());
-                    context.write(word, one);
+            		this.word.set(itr.nextToken());
+            		context.write(this.word, one);
             	}
                 
             }
