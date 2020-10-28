@@ -142,25 +142,24 @@ public class WordCount {
 
     	private static IntWritable countrank = new IntWritable();
     	private Text result = new Text();
+    	int rank=0;
     	@Override
     	public void reduce(IntWritable key, Iterable<Text> values, Context context) 
     			throws IOException, InterruptedException {
-    		int rank=1;
-    	while(rank<=100) {
-    	for (Text val : values) {
     	
+    	
+    	for (Text val : values) {
+    		if(rank>=100) {
+    			break;
+    		}
+    		rank++;
     			countrank.set(rank);
     			String pair = key.toString()+" "+val.toString();
     			result.set(pair);
     			context.write(countrank, result);
-    			rank++;
     		}
-    		
-    	
-    	
     			}
     		}
-    	}
 
 
     public static void main(String[] args) throws 
