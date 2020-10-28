@@ -137,6 +137,7 @@ public class WordCount {
 	          return -super.compare(b1, s1, l1, b2, s2, l2);
 	      }
 	}
+    
     //key: count value: word
     public static class SortIntValueReduce extends Reducer<IntWritable, Text, IntWritable,Text> {
 
@@ -154,7 +155,7 @@ public class WordCount {
     		}
     		rank++;
     			countrank.set(rank);
-    			String pair = key.toString()+" "+val.toString();
+    			String pair = "word:"+val.toString()+" times:"+key.toString();
     			result.set(pair);
     			context.write(countrank, result);
     		}
