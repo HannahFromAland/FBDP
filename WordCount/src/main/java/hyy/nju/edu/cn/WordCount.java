@@ -28,7 +28,7 @@ public class WordCount {
 
     public static class WordCountMapper extends Mapper<Object, Text, Text, IntWritable> {
     	
-    	String regex = "`~!@#$%^&*()_+-=[]{}\\|;'':\",./<>?";
+    	String regex = "\\pP";
     	String num = "[0-9]+"; //remove all punctuation and number
         private final static IntWritable one = new IntWritable(1);
         private Text word = new Text();
