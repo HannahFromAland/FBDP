@@ -155,9 +155,10 @@ public class WordCount {
     		}
     		rank++;
     			countrank.set(rank);
-    			String pair = "word:"+val.toString()+" times:"+key.toString();
-    			result.set(pair);
-    			context.write(countrank, result);
+    			result.set(val.toString());
+    			String pair = "word:"+result+" times:"+key;
+    			
+    			context.write(countrank, new Text(pair));
     		}
     			}
     		}
