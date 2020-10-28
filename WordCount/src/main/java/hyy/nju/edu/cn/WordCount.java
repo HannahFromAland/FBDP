@@ -75,8 +75,15 @@ public class WordCount {
     		
             StringTokenizer itr = new StringTokenizer(line);
             while (itr.hasMoreTokens()) {
+            	boolean founded = false;
             	String s=itr.nextToken();
-            	if(s.length()>=3 && StopWords.contains(s)==false) {
+            	for (String stopword : StopWords) {
+                        if (s.equals(stopword)) {
+                            founded = true;
+                            break;
+                        }
+                    }
+            	if (s.length() >= 3 && !founded) {
             		word.set(s);
             		context.write(word, one);
             	}
@@ -139,8 +146,9 @@ public class WordCount {
     	public void reduce(IntWritable key, Iterable<Text> values, Context context) 
     			throws IOException, InterruptedException {
     		int rank=1;
+    	while(rank<=100) {
     	for (Text val : values) {
-    		while(rank<=100) {
+    	
     			countrank.set(rank);
     			String pair = key.toString()+" "+val.toString();
     			result.set(pair);
