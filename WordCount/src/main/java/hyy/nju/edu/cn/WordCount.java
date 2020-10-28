@@ -28,7 +28,8 @@ public class WordCount {
 
     public static class WordCountMapper extends Mapper<Object, Text, Text, IntWritable> {
     	
-    	String regex = "`~!@#$%^&*()_+-=[]{}\\|;'':\",./<>?"+ "[0-9]+"; //remove all punctuation and number
+    	String regex = "`~!@#$%^&*()_+-=[]{}\\|;'':\",./<>?";
+    	String num = "[0-9]+"; //remove all punctuation and number
         private final static IntWritable one = new IntWritable(1);
         private Text word = new Text();
         private Set<String> StopWords = new HashSet<String>();
@@ -70,6 +71,7 @@ public class WordCount {
             ) throws IOException, InterruptedException {
     		String line = value.toString().toLowerCase();
     		line = line.replaceAll(regex, " "); //remove all punctuation
+    		line = line.replaceAll(num, " ");
     		
             StringTokenizer itr = new StringTokenizer(line);
             while (itr.hasMoreTokens()) {
