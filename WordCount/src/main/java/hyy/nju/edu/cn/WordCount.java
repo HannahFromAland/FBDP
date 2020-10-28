@@ -28,7 +28,7 @@ public class WordCount {
 
     public static class WordCountMapper extends Mapper<Object, Text, Text, IntWritable> {
     	
-    	String regex = "`~!@#$%^&*()_+-=[]{}\\|;'':\",./<>?0123456789"; //remove all punctuation and number
+    	String regex = "`~!@#$%^&*()_+-=[]{}\\|;'':\",./<>?"+ "[0-9]+"; //remove all punctuation and number
         private final static IntWritable one = new IntWritable(1);
         private Text word = new Text();
         private Set<String> StopWords = new HashSet<String>();
@@ -210,6 +210,7 @@ public class WordCount {
 		    
 		    FileInputFormat.addInputPath(job2, tempDir1);
 		    FileOutputFormat.setOutputPath(job2,new Path(args[1]));
+		    exit = job2.waitForCompletion(true);
         }
         FileSystem.get(conf).deleteOnExit(tempDir1);
 		if(exit) System.exit(1);
