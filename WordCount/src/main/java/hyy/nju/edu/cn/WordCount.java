@@ -140,7 +140,7 @@ public class WordCount {
     	for (Text val : values) {
     		while(rank<=100) {
     			countrank.set(rank);
-    			String pair = key.toString()+val.toString();
+    			String pair = key.toString()+" "+val.toString();
     			result.set(pair);
     			context.write(countrank, result);
     			rank++;
