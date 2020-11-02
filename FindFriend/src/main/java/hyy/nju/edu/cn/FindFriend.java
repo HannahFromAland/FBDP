@@ -70,8 +70,8 @@ public class FindFriend{
             String friend = friendAndusers[0];
             String[] users = friendAndusers[1].split(",");
             Arrays.sort(users);// sort the person list by rank
-            for (int i = 0; i < users.length - 2; i++) {    
-                for (int j = i + 1; j < users.length - 1; j++) {
+            for (int i = 0; i <= users.length - 2; i++) {    
+                for (int j = i + 1; j <= users.length - 1; j++) {
                     context.write(new Text("[" + users[i] + "," + users[j] + "],"), new Text(friend));
                 }
             }//iterate the person-pair group to find their common friends
