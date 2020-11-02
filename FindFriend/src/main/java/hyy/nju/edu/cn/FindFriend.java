@@ -61,11 +61,12 @@ public class FindFriend{
 	 *  output: [person1,person2] friend
 	 *  		[person2,person3] friend
 	 */
-	public static class CommonRegMapper extends Mapper<LongWritable, Text, Text, Text> {
-		public void map(LongWritable key, Text value, Context context) 
+	public static class CommonRegMapper extends Mapper<Object, Text, Text, Text> {
+		@Override
+		public void map(Object key, Text value, Context context) 
 				throws IOException, InterruptedException {
 			String line = value.toString();
-			String[] friendAndusers = line.split("\\s+");
+			String[] friendAndusers = line.split("\t");
             String friend = friendAndusers[0];
             String[] users = friendAndusers[1].split(",");
             Arrays.sort(users);// sort the person list by rank
