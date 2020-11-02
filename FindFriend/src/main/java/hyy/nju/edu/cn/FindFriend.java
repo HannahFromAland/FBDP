@@ -28,11 +28,11 @@ public class FindFriend{
 		public void map(LongWritable key, LongWritable value, Context context
 	            ) throws IOException, InterruptedException {
 			String line = value.toString(); 
-			String[] userAndfriends = line.split(":"); 
-			int user =  Integer.valueOf(userAndfriends[0]).intValue();	//user name
+			String[] userAndfriends = line.split(","); 
+			long user =  Integer.valueOf(userAndfriends[0]).intValue();	//user name
 			String[] friends = userAndfriends[1].split("\\s+"); //user friends
 			for(String friend:friends) {
-				int friendnum = Integer.valueOf(friend).intValue();
+				long friendnum = Integer.valueOf(friend).intValue();
 				context.write(new LongWritable(friendnum), new LongWritable(user)); //key: being followed by value
 			}
 		}
