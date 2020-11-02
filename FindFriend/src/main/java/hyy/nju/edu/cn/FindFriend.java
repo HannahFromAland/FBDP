@@ -109,8 +109,8 @@ public class FindFriend{
         job1.setJarByClass(FindFriend.class);
         job1.setMapperClass(ListReverseMapper.class);
         job1.setReducerClass(ListReverseReducer.class);
-        job1.setInputFormatClass(TextInputFormat.class);
-        job1.setOutputFormatClass(SequenceFileOutputFormat.class);
+        //job1.setInputFormatClass(TextInputFormat.class);
+        //job1.setOutputFormatClass(SequenceFileOutputFormat.class);
         job1.setOutputKeyClass(Text.class);
         job1.setOutputValueClass(Text.class);
         
@@ -119,8 +119,8 @@ public class FindFriend{
         if(job1.waitForCompletion(true)){
         	Job job2 = Job.getInstance(conf, "findfriend-job2");
         	job2.setJarByClass(FindFriend.class);
-        	job2.setInputFormatClass(SequenceFileInputFormat.class);
-			job2.setOutputFormatClass(TextOutputFormat.class);	
+        	//job2.setInputFormatClass(SequenceFileInputFormat.class);
+			//job2.setOutputFormatClass(TextOutputFormat.class);	
 			job2.setOutputKeyClass(Text.class);
 		    job2.setOutputValueClass(Text.class);
 		    job2.setMapperClass(CommonRegMapper.class); 
