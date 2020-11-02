@@ -24,8 +24,8 @@ public class FindFriend{
      * First map:reverse the input to be [friend, person].
      * 
      */
-	public static class ListReverseMapper extends Mapper<Object, Text, IntWritable, IntWritable> {
-		public void map(IntWritable key, IntWritable value, Context context
+	public static class ListReverseMapper extends Mapper<Object, Text, LongWritable, LongWritable> {
+		public void map(LongWritable key, LongWritable value, Context context
 	            ) throws IOException, InterruptedException {
 			String line = value.toString(); 
 			String[] userAndfriends = line.split(":"); 
@@ -33,7 +33,7 @@ public class FindFriend{
 			String[] friends = userAndfriends[1].split("\\s+"); //user friends
 			for(String friend:friends) {
 				int friendnum = Integer.valueOf(friend).intValue();
-				context.write(new IntWritable(friendnum), new IntWritable(user)); //key: being followed by value
+				context.write(new LongWritable(friendnum), new LongWritable(user)); //key: being followed by value
 			}
 		}
 	}
@@ -41,11 +41,11 @@ public class FindFriend{
 	 * First reduce: get the reverse friend list of friend person1, person2, ...
 	 *
 	 */
-	public static class ListReverseReducer extends Reducer<IntWritable, IntWritable,  IntWritable,Text> {
-		 public void reduce(IntWritable friendnum, Iterable<IntWritable> users, Context context) 
+	public static class ListReverseReducer extends Reducer<LongWritable, LongWritable,  LongWritable,Text> {
+		 public void reduce(LongWritable friendnum, Iterable<LongWritable> users, Context context) 
 				 throws IOException, InterruptedException {
 			 StringBuffer s = new StringBuffer();
-			 for(IntWritable user: users) {
+			 for(LongWritable user: users) {
 				 if (s.length() != 0) {
 	                    s.append(",");
 	                }
@@ -75,7 +75,7 @@ public class FindFriend{
         job1.setReducerClass(ListReverseReducer.class);
         job1.setInputFormatClass(TextInputFormat.class);
         job1.setOutputFormatClass(TextOutputFormat.class);
-        job1.setOutputKeyClass(IntWritable.class);
+        job1.setOutputKeyClass(LongWritable.class);
         job1.setOutputValueClass(Text.class);
         
         FileInputFormat.addInputPath(job1, new Path(args[0]));
