@@ -24,7 +24,7 @@ public class FindFriend{
      * First map:reverse the input to be [friend, person].
      * 
      */
-	public static class ListReverseMapper extends Mapper<Object, Text, Text, Text> {
+	public static class ListReverseMapper extends Mapper<LongWritable, Text, Text, Text> {
 		public void map(LongWritable key, Text value, Context context
 	            ) throws IOException, InterruptedException {
 			String line = value.toString(); 
@@ -45,10 +45,7 @@ public class FindFriend{
 				 throws IOException, InterruptedException {
 			 StringBuffer list = new StringBuffer();
 			 for(Text user: users) {
-				 if (list.length() != 0) {
-	                    list.append(",");
-	                }
-				 list.append(user);
+				 list.append(user).append(",");
 			 }
 			 context.write(friend, new Text(list.toString()));
 		 }
