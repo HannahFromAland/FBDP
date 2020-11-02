@@ -73,7 +73,7 @@ public class FindFriend{
         job1.setReducerClass(ListReverseReducer.class);
         job1.setInputFormatClass(TextInputFormat.class);
         job1.setOutputFormatClass(TextOutputFormat.class);
-        job1.setOutputKeyClass(LongWritable.class);
+        job1.setOutputKeyClass(Text.class);
         job1.setOutputValueClass(Text.class);
         
         FileInputFormat.addInputPath(job1, new Path(args[0]));
