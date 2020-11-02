@@ -24,16 +24,15 @@ public class FindFriend{
      * First map:reverse the input to be [friend, person].
      * 
      */
-	public static class ListReverseMapper extends Mapper<Object, Text, LongWritable, LongWritable> {
-		public void map(LongWritable key, LongWritable value, Context context
+	public static class ListReverseMapper extends Mapper<Object, Text, Text, Text> {
+		public void map(LongWritable key, Text value, Context context
 	            ) throws IOException, InterruptedException {
 			String line = value.toString(); 
 			String[] userAndfriends = line.split(","); 
-			long user =  Integer.valueOf(userAndfriends[0]).intValue();	//user name
+			String user =  userAndfriends[0];	//user name
 			String[] friends = userAndfriends[1].split("\\s+"); //user friends
 			for(String friend:friends) {
-				long friendnum = Integer.valueOf(friend).intValue();
-				context.write(new LongWritable(friendnum), new LongWritable(user)); //key: being followed by value
+				context.write(new Text(friend), new Text(user)); //key: being followed by value
 			}
 		}
 	}
@@ -41,18 +40,17 @@ public class FindFriend{
 	 * First reduce: get the reverse friend list of friend person1, person2, ...
 	 *
 	 */
-	public static class ListReverseReducer extends Reducer<LongWritable, LongWritable,  LongWritable,Text> {
-		 public void reduce(LongWritable friendnum, Iterable<LongWritable> users, Context context) 
+	public static class ListReverseReducer extends Reducer<Text,Text,Text,Text> {
+		 public void reduce(Text friend, Iterable<Text> users, Context context) 
 				 throws IOException, InterruptedException {
-			 StringBuffer s = new StringBuffer();
-			 for(LongWritable user: users) {
-				 if (s.length() != 0) {
-	                    s.append(",");
+			 StringBuffer list = new StringBuffer();
+			 for(Text user: users) {
+				 if (list.length() != 0) {
+	                    list.append(",");
 	                }
-				 String username = user+"";
-				 s.append(username);
+				 list.append(user);
 			 }
-			 context.write(friendnum, new Text(s.toString()));
+			 context.write(friend, new Text(list.toString()));
 		 }
 	}
 	//public static class CommonRegMapper extends Mapper<Object, Text, Text, IntWritable> {}
