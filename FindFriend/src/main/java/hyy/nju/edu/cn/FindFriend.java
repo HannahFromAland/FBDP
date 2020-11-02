@@ -66,7 +66,7 @@ public class FindFriend{
 		public void map(Object key, Text value, Context context) 
 				throws IOException, InterruptedException {
 			String line = value.toString();
-			String[] friendAndusers = line.split("\t");
+			String[] friendAndusers = line.split("\\s+");
             String friend = friendAndusers[0];
             String[] users = friendAndusers[1].split(",");
             Arrays.sort(users);// sort the person list by rank
