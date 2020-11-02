@@ -42,7 +42,18 @@ friend1和friend2的共同好友不一定含有person，该list只能说明perso
 
     key: [200,300] value: [100, 400]
 
+遇见问题：最开始将第一个person以intWritable读入，通过报错提醒修改为longWritable（但是后来还是报错说不能将LongWritable转为Text，于是索性直接改为Text进行处理了hhhh
 
+![image-20201102110801169](C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20201102110801169.png)
 
+- 第一个mapreduce之后的返回结果
 
+![image-20201102134736764](C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20201102134736764.png)
 
+- 发现第一行的key居然是空的
+  - 解决方案：出现一个空值对应全部person，查阅input文件发现是因为分割符号“，”后面还有一个空格。。如果不在split中处理的话会在mapper阶段读入dull作为friend
+- friendlist最后会有一个逗号
+  - 解决方案：在reduce中先对返回的字符串处理一下，去掉最后一个字符
+- 最终的mapreduce job 1 结果：
+
+![image-20201102140447238](C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20201102140447238.png)
