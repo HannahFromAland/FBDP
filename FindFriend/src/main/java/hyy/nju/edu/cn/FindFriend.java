@@ -28,7 +28,7 @@ public class FindFriend{
 		public void map(LongWritable key, Text value, Context context
 	            ) throws IOException, InterruptedException {
 			String line = value.toString(); 
-			String[] userAndfriends = line.split(","); 
+			String[] userAndfriends = line.split(", "); 
 			String user =  userAndfriends[0];	//user name
 			String[] friends = userAndfriends[1].split("\\s+"); //user friends
 			for(String friend:friends) {
@@ -47,7 +47,8 @@ public class FindFriend{
 			 for(Text user: users) {
 				 list.append(user).append(",");
 			 }
-			 context.write(friend, new Text(list.toString()));
+			 String friendlist = list.toString();
+			 context.write(friend, new Text(friendlist.substring(0,friendlist.length()-1)));
 		 }
 	}
 	//public static class CommonRegMapper extends Mapper<Object, Text, Text, IntWritable> {}
