@@ -1,30 +1,19 @@
-# 作业5 README
+# 作业7 利用MapReduce实现Clustering
 
 实现了Kmeans求聚类结果和结果的可视化。
 
-result目录为运行结果和可视化图片。
-
-## 运行说明
-
 #### 求聚类结果：
-
-在系统节点上执行如下命令：
+参考代码为Chapter10 KMeans
+主要参数：
 
 * num of k：一共要聚成几类(int)
 * inputpath：数据点文件(filepath)
 * outputpath：cluster中间结果和最终分类结果的目录(dirpath)
 * iteration times：迭代次数(int)
-
+执行语句：
 > $ bin/hadoop jar KMeansResult.jar \<num of k> \<inputpath> \<outputpath> \<iteration times>
->
-> 例：
->
-> $ bin/hadoop jar KMeansResult.jar 5  KMeans/input/NewInstance.txt  KMeans/output/  20
-在output路径下的result目录中获取分类结果
 
-#### 可视化：
-
-运行聚类数据可视化.py
+#### 聚类结果可视化：
 
 输入分类结果文件路径，即可在python文件路径下获取可视化结果图片（最多支持分10类）。
 
