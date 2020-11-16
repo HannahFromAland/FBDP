@@ -4,14 +4,18 @@
 
 #### 求聚类结果：
 参考代码为Chapter10 KMeans
+
 主要参数：
 
 * num of k：一共要聚成几类(int)
 * inputpath：数据点文件(filepath)
 * outputpath：cluster中间结果和最终分类结果的目录(dirpath)
 * iteration times：迭代次数(int)
+
 执行语句：
 > $ bin/hadoop jar KMeansResult.jar \<num of k> \<inputpath> \<outputpath> \<iteration times>
+
+
 
 #### 聚类结果可视化：
 
@@ -46,4 +50,3 @@
 #### Conclusion
 
 可以看出，聚为3类时聚类结果很不稳定，5类时稍好，10类时聚类结果比较稳定。
-
