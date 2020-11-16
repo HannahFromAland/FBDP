@@ -15,35 +15,33 @@
 
 #### 聚类结果可视化：
 
-输入分类结果文件路径，即可在python文件路径下获取可视化结果图片（最多支持分10类）。
-
 ## 聚类结果
 
-实验将数据点分别聚为3类，5类，10类，每种聚类进行了三次，因聚类最初随机选取的中心点不同，聚类结果也会不同。但总体来看，聚的类数越多，聚类结果越稳定。
+实验将数据点分别聚为3类，5类，10类，每种聚类按照其类别进行相应次数的迭代，因聚类最初随机选取的中心点不同，聚类结果也会不同。但总体来看，聚的类数越多，聚类结果越稳定。
 
-#### K=3
+#### K=3（设定迭代次数为3）
 
-![](https://i.loli.net/2019/11/11/rpBJh4zgn7OuqbN.png)
+![k_3.png](https://i.loli.net/2020/11/16/nwSBR765DdsJI2j.png)
 
-![](https://i.loli.net/2019/11/11/pIxRdlY7eiZSEK1.png)
+![k_3_2try.png](https://i.loli.net/2020/11/16/2A8vqfxhEcK4MeC.png)
 
-![](https://i.loli.net/2019/11/11/kK5JP4XFdGhWYBA.png)
+![k_3_3try.png](https://i.loli.net/2020/11/16/Lr1JvdGCzyKqtmY.png)
 
-#### K=5
+#### K=5（设定迭代次数为3）
 
-![](https://i.loli.net/2019/11/11/6TSJ8eLfIxvd2b3.png)
+![k_5.png](https://i.loli.net/2020/11/16/4evNIrVoT8w9zlx.png)
 
-![](https://i.loli.net/2019/11/11/7B4mgoUXul8CKyH.png)
+![k_5_2try.png](https://i.loli.net/2020/11/16/h9O2HCWBbKE5TYy.png)
 
-![](https://i.loli.net/2019/11/11/7DBFrVEJsLnyTbA.png)
+![k_5_3try.png](https://i.loli.net/2020/11/16/NxKps9Eq4DGFr1Q.png)
 
-#### K=10
+#### K=10（设定迭代次数为10）
 
-![](https://i.loli.net/2019/11/11/eoD76QLfdrhb4W3.png)
+![k_10.png](https://i.loli.net/2020/11/16/PoTEAUxH82XFgpe.png)
 
-![](https://i.loli.net/2019/11/11/FEH5qtcsbzyxYa3.png)
+![k_10_2try.png](https://i.loli.net/2020/11/16/o6auTGUxdp1zqQt.png)
 
-![](https://i.loli.net/2019/11/11/VRvAM3K74ZhSgTE.png)
+![k_10_3try.png](https://i.loli.net/2020/11/16/WQspaXZy3dO9eRx.png)
 
 #### Conclusion
 
