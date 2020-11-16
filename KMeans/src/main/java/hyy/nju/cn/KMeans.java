@@ -1,4 +1,4 @@
-package KMeans;
+package hyy.nju.cn;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -46,6 +46,7 @@ public class KMeans {
                 kClusters.add(c);
             }
             assert (kClusters.size() == k);
+            scan.close();
         }
 
         public void map(Object key, Text value, Context context) throws IOException, InterruptedException {

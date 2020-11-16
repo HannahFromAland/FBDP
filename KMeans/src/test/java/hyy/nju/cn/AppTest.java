@@ -1,4 +1,4 @@
-package KMeans;
+package hyy.nju.cn;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

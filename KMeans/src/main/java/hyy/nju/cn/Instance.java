@@ -1,4 +1,4 @@
-package KMeans;
+package hyy.nju.cn;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -87,15 +87,13 @@ public class Instance implements Writable{
         return nearestClusterID;
     }
 
-    @Override
     public void write(DataOutput out) throws IOException{
         out.writeInt(value.size());
         for(int i = 0; i < value.size(); i++){
             out.writeDouble(value.get(i));
         }
     }
-
-    @Override
+    
     public void readFields(DataInput in) throws IOException{
         value = new ArrayList<Double>();
         int size = in.readInt();

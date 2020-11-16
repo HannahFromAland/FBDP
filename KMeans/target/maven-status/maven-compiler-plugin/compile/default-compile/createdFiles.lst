@@ -1,5 +1,7 @@
-hyy\nju\edu\cn\FindFriend$ListReverseReducer.class
-hyy\nju\edu\cn\FindFriend.class
-hyy\nju\edu\cn\FindFriend$CommonGroupReducer.class
-hyy\nju\edu\cn\FindFriend$ListReverseMapper.class
-hyy\nju\edu\cn\FindFriend$CommonRegMapper.class
+hyy\nju\cn\KMeansResult$KMeansResultMapper.class
+hyy\nju\cn\Cluster.class
+hyy\nju\cn\KMeans$KMeansMapper.class
+hyy\nju\cn\KMeans$KMeansReducer.class
+hyy\nju\cn\KMeansResult.class
+hyy\nju\cn\Instance.class
+hyy\nju\cn\KMeans.class

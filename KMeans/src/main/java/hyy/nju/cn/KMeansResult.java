@@ -1,23 +1,20 @@
-package KMeans;
+package hyy.nju.cn;
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Random;
 import java.util.Scanner;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataInputStream;
-import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
-import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
-import static KMeans.KMeans.Kmeansmain;
+import static hyy.nju.cn.KMeans.Kmeansmain;
 
 public class KMeansResult {
     private static int k = 0;
@@ -47,6 +44,7 @@ public class KMeansResult {
                 kClusters.add(c);
             }
             assert (kClusters.size() == k);
+            scan.close();
         }
 
         public void map(Object key, Text value, Context context) throws IOException, InterruptedException {

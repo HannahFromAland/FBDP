@@ -1,4 +1,4 @@
-package KMeans;
+package hyy.nju.cn;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -67,21 +67,18 @@ public class Cluster implements WritableComparable<Cluster> {
         return Integer.toString(clusterID) + "," + Long.toString(numOfPoints) + "," + center.toString();
     }
 
-    @Override
     public void write(DataOutput out) throws IOException {
         out.writeInt(clusterID);
         out.writeLong(numOfPoints);
         center.write(out);
     }
 
-    @Override
     public void readFields(DataInput in) throws IOException {
         clusterID = in.readInt();
         numOfPoints = in.readLong();
         center.readFields(in);
     }
 
-    @Override
     public int compareTo(Cluster c) {
         if(clusterID < c.getClusterID()) return -1;
         else if (clusterID == c.getClusterID()) return 0;

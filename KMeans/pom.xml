@@ -2,22 +2,21 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>hyy.nju.edu.cn</groupId>
+  <groupId>hyy.nju.cn</groupId>
   <artifactId>KMeans</artifactId>
-  <version>1.0</version>
+  <version>1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>KMeans</name>
   <url>http://maven.apache.org</url>
 
-   <properties>
+  <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
         <java.version>8</java.version>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
   </properties>
-
 
    <dependencies>
     <dependency>
@@ -79,7 +78,7 @@
 					  <classesDirectory>target/classes/</classesDirectory>
 					  <archive>
 					  	<manifest>
-						  	<mainClass>KMeans.KMeansMain</mainClass>
+						  	<mainClass>hyy.nju.cn.KMeans</mainClass>
 							  <useUniqueVersions>false</useUniqueVersions>
 							  <addClasspath>false</addClasspath>
 						  </manifest>
@@ -107,4 +106,3 @@
     </pluginManagement>
   </build>
 </project>
-
