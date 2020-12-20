@@ -116,7 +116,10 @@ Time taken: 43.972 seconds, Fetched: 1 row(s)
 > 解决方案：
 >
 > ```bash
-> hive (default)> set hive.auto.convert.join=false; #关闭mapjoin，即不对文件进行mapjoin，因为mapjoin会首先将较小的一张表读入hashtable，再进行join工作，禁用mapjoin之后可以解决内存溢出的问题，但直接使用join可能速度会变慢.
+> hive (default)> set hive.auto.convert.join=false;
+> #关闭mapjoin，即不对文件进行mapjoin，
+> 因为mapjoin会首先将较小的一张表读入hashtable，再进行join工作，
+> 禁用mapjoin之后可以解决内存溢出的问题，但直接使用join可能速度会变慢.
 > ```
 >
 
