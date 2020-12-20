@@ -44,4 +44,109 @@ $ hdfs dfs -ls  /user/hann/input
 
 - 结果见`Product/PopularItem` 及`Product/PopularMerchant`
 
+## 双十一购买商品的男女比例，以及购买了商品的买家年龄段的比例
+
+- 首先配置`hive`并配置`MYSQL`作为元数据库
+
+> 参考链接：[安装及配置hive](http://dblab.xmu.edu.cn/blog/1080-2/)
+
+- 将数据导入hive并建立两张表`user_log` `user_info`
+
+  - 将数据集上传至HDFS，并分别保存在`user_log`及`user_info`的文件夹中
+  - 在hive中建表
+
+  ```bash
+  hann@ubuntu:~$ service mysql start
+  hann@ubuntu:~$ hive
+  hive>  create database dbtaobao;
+  hive>  use dbtao;
+  hive> CREATE EXTERNAL TABLE taobao.user_log(user_id INT,item_id INT,cat_id INT,merchant_id INT,brand_id INT,time_stamp INT,action_type INT) COMMENT 'create user_log!' ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' STORED AS TEXTFILE LOCATION '/user/hann/user_log';
+  OK
+  Time taken: 0.303 seconds
+  hive> CREATE EXTERNAL TABLE taobao.user_info(user_id INT,age_range INT, gender INT) COMMENT 'create user_info!' ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' STORED AS TEXTFILE LOCATION '/user/hann/user_info';
+  OK
+  Time taken: 0.177 seconds
+  hive> select * from user_log limit 10;
+  OK
+  328862	323294	833	2882	2661	829	0
+  328862	844400	1271	2882	2661	829	0
+  328862	575153	1271	2882	2661	829	0
+  328862	996875	1271	2882	2661	829	0
+  328862	1086186	1271	1253	1049	829	0
+  328862	623866	1271	2882	2661	829	0
+  328862	542871	1467	2882	2661	829	0
+  328862	536347	1095	883	1647	829	0
+  328862	364513	1271	2882	2661	829	0
+  328862	575153	1271	2882	2661	829	0
+  Time taken: 2.257 seconds, Fetched: 10 row(s)
+  
+  ```
+
+- 查询双十一当天购买的男女比例
+
+> 考虑去重问题：由于双十一当天购买总量是按照**购买次数**作为总数进行统计的，因此对同一用户进行的多次购买操作不应该去重（极端情况为仅有一男一女用户，分别购买3次和4次某商品，实际按照购买总数进行性别统计的比例应为3:4而不是1:1）
+> 
+```bash
+hive> select sum(case when c.gender=1 then 1 else 0 end)/sum(case when c.gender=0 then 1 else 0 end)
+    > from(select a.user_id,a.action_type,
+    > b.gender
+    > from(select *
+    > from user_log
+    > where time_stamp=1111
+    > and action_type=2)a
+    > left outer join
+    > (select *
+    > from user_info)b
+    > on a.user_id = b.user_id
+    > where gender in (1,0))c;
+    
+OK
+0.3826292411595477 # 双十一当天购买商品的男女比例
+Time taken: 43.972 seconds, Fetched: 1 row(s)
+
+```
+
+
+> 首次运行出现报错：
+>
+> ```bash
+> FAILED: Execution Error, return code 3 from org.apache.hadoop.hive.ql.exec.mr.MapredLocalTask
+> ```
+>
+> 解决方案：
+>
+> ```bash
+> hive (default)> set hive.auto.convert.join=false; #关闭mapjoin，即不对文件进行mapjoin，因为mapjoin会首先将较小的一张表读入hashtable，再进行join工作，禁用mapjoin之后可以解决内存溢出的问题，但直接使用join可能速度会变慢.
+> ```
+>
+
+- 查询购买商品买家年龄段的比例
+
+```bash
+hive> select c.age_range, count(user_id)
+    > from(select a.user_id,a.action_type,
+    > b.age_range
+    > from(select *
+    > from user_log
+    > where time_stamp=1111
+    > and action_type=2)a
+    > left outer join
+    > (select *
+    > from user_info)b
+    > on a.user_id = b.user_id
+    > where b.age_range in (1,2,3,4,5,6,7,8)
+    > and b.gender in (0,1))c
+    > group by c.age_range;
+OK
+1	54 #  0.0057%
+2	122476 
+3	314465
+4	252285
+5	127801
+6	101901
+7	18868
+8	3323
+total 941173
+Time taken: 93.262 seconds, Fetched: 8 row(s)
+```
   
