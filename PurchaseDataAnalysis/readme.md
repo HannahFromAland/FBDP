@@ -60,10 +60,18 @@ $ hdfs dfs -ls  /user/hann/input
   hann@ubuntu:~$ hive
   hive>  create database dbtaobao;
   hive>  use dbtao;
-  hive> CREATE EXTERNAL TABLE taobao.user_log(user_id INT,item_id INT,cat_id INT,merchant_id INT,brand_id INT,time_stamp INT,action_type INT) COMMENT 'create user_log!' ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' STORED AS TEXTFILE LOCATION '/user/hann/user_log';
+  hive> CREATE EXTERNAL TABLE taobao.user_log(
+  user_id INT,item_id INT,cat_id INT,merchant_id INT,brand_id INT,time_stamp INT,action_type INT)
+  COMMENT 'create user_log!' 
+  ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' 
+  STORED AS TEXTFILE LOCATION '/user/hann/user_log';
   OK
   Time taken: 0.303 seconds
-  hive> CREATE EXTERNAL TABLE taobao.user_info(user_id INT,age_range INT, gender INT) COMMENT 'create user_info!' ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' STORED AS TEXTFILE LOCATION '/user/hann/user_info';
+  hive> CREATE EXTERNAL TABLE taobao.user_info(
+  user_id INT,age_range INT, gender INT) 
+  COMMENT 'create user_info!' 
+  ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' 
+  STORED AS TEXTFILE LOCATION '/user/hann/user_info';
   OK
   Time taken: 0.177 seconds
   hive> select * from user_log limit 10;
@@ -152,4 +160,7 @@ OK
 total 941173
 Time taken: 93.262 seconds, Fetched: 8 row(s)
 ```
-  
+
+- 比例结果如下
+![双十一消费者年龄分布.png](https://i.loli.net/2020/12/21/yVwqNKpvck7sm5t.png)
+
