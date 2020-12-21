@@ -37,23 +37,24 @@ public class AllItem {
 
             String item_id = field[1];
             String user_id = field[0];
-            
-            if("2".equals(field[6])){
-                t.set(String.valueOf(item_id));
-                context.write(t, one);
-            }
-            if("1".equals(field[6]) ){
-                if(!cartSet.contains(user_id)){
-                    cartSet.add(user_id);
+            if("1111".equals(field[5])){
+                if("2".equals(field[6])){
                     t.set(String.valueOf(item_id));
                     context.write(t, one);
                 }
-            }
-            else if("3".equals(field[6]) ){
-                if(!starSet.contains(user_id)){
-                    starSet.add(user_id);
-                    t.set(String.valueOf(item_id));
-                    context.write(t, one);
+                if("1".equals(field[6]) ){
+                    if(!cartSet.contains(user_id)){
+                        cartSet.add(user_id);
+                        t.set(String.valueOf(item_id));
+                        context.write(t, one);
+                    }
+                }
+                else if("3".equals(field[6]) ){
+                    if(!starSet.contains(user_id)){
+                        starSet.add(user_id);
+                        t.set(String.valueOf(item_id));
+                        context.write(t, one);
+                    }
                 }
             }
         }

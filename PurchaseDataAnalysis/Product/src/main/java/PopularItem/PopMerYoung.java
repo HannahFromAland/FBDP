@@ -38,7 +38,7 @@ public class PopMerYoung {
             String merchant_id = field[3];
             String user_id = field[0];
             String age_range = field[7];
-            if("1".equals(age_range) || "2".equals(age_range) || "3".equals(age_range)){
+            if("1111".equals(field[5]) &&("1".equals(age_range) || "2".equals(age_range) || "3".equals(age_range))){
                 if("2".equals(field[6])){
                     t.set(String.valueOf(merchant_id));
                     context.write(t, one);

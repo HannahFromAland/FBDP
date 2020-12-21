@@ -29,10 +29,10 @@ public class ReduceJoin {
 
             int user_id= 0;
             if(name.endsWith("log_format1.csv") && field.length ==7) {
-                bean.set(Integer.parseInt(field[0]),field[1]+" "+field[2]+" "+field[3]+" "+field[4]+" "+field[5]+" "+field[6], "","log");
+                bean.set(Integer.parseInt(field[0]),field[1]+","+field[2]+","+field[3]+","+field[4]+","+field[5]+","+field[6], "","log");
                 user_id= Integer.parseInt(field[0]);
             }else if(name.endsWith("info_format1.csv") && field.length ==3){
-                bean.set(Integer.parseInt(field[0]), " ",field[1]+" "+field[2] , "info");
+                bean.set(Integer.parseInt(field[0]), " ",field[1]+","+field[2] , "info");
                 user_id= Integer.parseInt(field[0]);
             }
             t.set(String.valueOf(user_id));
@@ -65,7 +65,7 @@ public class ReduceJoin {
             // join
             for(int i=0;i<loggerBeans.size();i++){
                 for(int j=0;j<infBeans.size();j++){
-                    context.write(new Text(loggerBeans.get(i)+" "+infBeans.get(j)), NullWritable.get() );
+                    context.write(new Text(loggerBeans.get(i)+","+infBeans.get(j)), NullWritable.get() );
                 }
             }
 

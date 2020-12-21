@@ -66,13 +66,13 @@ public class InfoBean implements Writable {
         out.writeUTF(flag);
     }
     public String toLog(){
-        return user_id+" "+log;
+        return user_id+","+log;
     }
     public String toInfo(){
         return info;
     }
     @Override
     public String toString(){
-        return user_id+" "+log+" "+info+" "+flag;
+        return user_id+","+log+","+info+","+flag;
     }
 }
