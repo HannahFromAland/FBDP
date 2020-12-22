@@ -44,6 +44,99 @@ $ hdfs dfs -ls  /user/hann/input
 
 - 结果见`Product/PopularItem` 及`Product/PopularMerchant`
 
+### Spark实现
+
+- 首先配置Spark环境（为了调试和交互方便选择`Spark+IntelliJ+Maven配置`）
+
+  - 在启动界面的Configure - Plugins中（或在已有的项目界面中的File-Settings-Plugins），找到Scala，点击安装
+  - 新建一个Maven项目，project SDK选择java 1.8
+  - 在Project Structure - Ploatform Settings - Global Libraries中，添加scala SDK
+  - 添加好后右键点击添加的SDK，点击`Copy to Project Libraries`并apply
+  - `pom.xml`配置如下
+
+  ```xml
+  <properties>
+          <spark.version>2.1.0</spark.version>
+          <scala.version>2.11</scala.version>
+      </properties>
+  
+  
+      <dependencies>
+          <dependency>
+              <groupId>org.apache.spark</groupId>
+              <artifactId>spark-core_${scala.version}</artifactId>
+              <version>${spark.version}</version>
+          </dependency>
+          <dependency>
+              <groupId>org.apache.spark</groupId>
+              <artifactId>spark-streaming_${scala.version}</artifactId>
+              <version>${spark.version}</version>
+          </dependency>
+          <dependency>
+              <groupId>org.apache.spark</groupId>
+              <artifactId>spark-sql_${scala.version}</artifactId>
+              <version>${spark.version}</version>
+          </dependency>
+          <dependency>
+              <groupId>org.apache.spark</groupId>
+              <artifactId>spark-hive_${scala.version}</artifactId>
+              <version>${spark.version}</version>
+          </dependency>
+          <dependency>
+              <groupId>org.apache.spark</groupId>
+              <artifactId>spark-mllib_${scala.version}</artifactId>
+              <version>${spark.version}</version>
+          </dependency>
+  
+      </dependencies>
+  
+      <build>
+          <plugins>
+  
+              <plugin>
+                  <groupId>org.scala-tools</groupId>
+                  <artifactId>maven-scala-plugin</artifactId>
+                  <version>2.15.2</version>
+                  <executions>
+                      <execution>
+                          <goals>
+                              <goal>compile</goal>
+                              <goal>testCompile</goal>
+                          </goals>
+                      </execution>
+                  </executions>
+              </plugin>
+  
+              <plugin>
+                  <groupId>org.apache.maven.plugins</groupId> <!--不加group id下面的version和artifact id会报错-->
+                  <artifactId>maven-compiler-plugin</artifactId> 
+                  <version>3.6.0</version>
+                  <configuration>
+                      <source>1.8</source>
+                      <target>1.8</target>
+                  </configuration>
+              </plugin>
+  
+              <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-surefire-plugin</artifactId>
+                  <version>2.19</version>
+                  <configuration>
+                      <skip>true</skip>
+                  </configuration>
+              </plugin>
+  
+          </plugins>
+      </build>
+  ```
+
+  - 在项目的`src`文件夹内新建一个scala文件夹并右键`mark directory as source roots`，在此文件夹内新建`Scala Class`并选择`Object`即可开始编写Scala程序了~
+
+  **Hint：** 解决Spark运行过程中很多输出的问题
+
+  将`spark/conf/log4j.properties.example`拷贝到项目的`Source Root`下面并将`log4j.rootCategory`的参数由`INFO`改为`ERROR`(也可保留为`WARN`)重新运行就没有annoying的一大堆红色输出了（每次看到红色提示就算不是ERROR也会虎躯一震...）
+
+
 ## 双十一购买商品的男女比例，以及购买了商品的买家年龄段的比例
 
 - 首先配置`hive`并配置`MYSQL`作为元数据库
