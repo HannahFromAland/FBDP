@@ -38,21 +38,21 @@ public class PopMerYoung {
             String merchant_id = field[3];
             String user_id = field[0];
             String age_range = field[7];
-            if("1111".equals(field[5]) &&("1".equals(age_range) || "2".equals(age_range) || "3".equals(age_range))){
+            if(field.length==9 && "1111".equals(field[5]) &&("1".equals(age_range) || "2".equals(age_range) || "3".equals(age_range))){
                 if("2".equals(field[6])){
                     t.set(String.valueOf(merchant_id));
                     context.write(t, one);
                 }
                 if("1".equals(field[6]) ){
-                    if(!cartSet.contains(user_id)){
-                        cartSet.add(user_id);
+                    if(!cartSet.contains(user_id+" "+merchant_id)){
+                        cartSet.add(user_id+" "+merchant_id);
                         t.set(String.valueOf(merchant_id));
                         context.write(t, one);
                     }
                 }
                 else if("3".equals(field[6]) ){
-                    if(!starSet.contains(user_id)){
-                        starSet.add(user_id);
+                    if(!starSet.contains(user_id+" "+merchant_id)){
+                        starSet.add(user_id+" "+merchant_id);
                         t.set(String.valueOf(merchant_id));
                         context.write(t, one);
                     }

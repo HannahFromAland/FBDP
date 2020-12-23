@@ -26,8 +26,8 @@ public class AllItem {
     public static class CountMapper extends Mapper<LongWritable, Text, Text, IntWritable> {
         IntWritable one = new IntWritable(1);
         Text t = new Text();
-        HashSet<String> cartSet= new HashSet<String>();
-        HashSet<String> starSet= new HashSet<String>();
+        HashSet<String> cartSet= new HashSet<>();
+        HashSet<String> starSet= new HashSet<>();
         @Override
         protected void map(LongWritable key, Text value, Context context)
                 throws IOException, InterruptedException {
@@ -37,25 +37,26 @@ public class AllItem {
 
             String item_id = field[1];
             String user_id = field[0];
-            if("1111".equals(field[5])){
+            if(field.length==9 && "1111".equals(field[5])){
                 if("2".equals(field[6])){
                     t.set(String.valueOf(item_id));
                     context.write(t, one);
                 }
                 if("1".equals(field[6]) ){
-                    if(!cartSet.contains(user_id)){
-                        cartSet.add(user_id);
+                    if(!cartSet.contains(user_id+" "+item_id)){
+                        cartSet.add(user_id+" "+item_id);
                         t.set(String.valueOf(item_id));
                         context.write(t, one);
                     }
                 }
                 else if("3".equals(field[6]) ){
-                    if(!starSet.contains(user_id)){
-                        starSet.add(user_id);
+                    if(!starSet.contains(user_id+" "+item_id)){
+                        starSet.add(user_id+" "+item_id);
                         t.set(String.valueOf(item_id));
                         context.write(t, one);
                     }
                 }
+
             }
         }
     }
