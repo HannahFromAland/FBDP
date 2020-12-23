@@ -41,7 +41,7 @@ $ hdfs dfs -ls  /user/hann/input
 > - 进一步优化方向（但因为感觉略不符合题意所以没实现hh只是对于该分析逻辑的想法）：对三种行为的计数进行加权，如`单次购买行为：单次添加购物车：单次添加收藏夹=50%：30%：20%`，可以有效区分被过多添加收藏夹/购物车的商品与购买次数多的商品之间的“受欢迎程度”
 
 - 使用两次MapReduce实现：第一次MapReduce实现去重和频率统计，第二次MapReduce进行频率倒排（源文件分别为`Product/src/main/java/PopularItem/AllItem` 以及`Product/src/main/java/PopularItem/PopMerYoung` 
-
+- 收藏+加入购物车对用户及对应商品和店铺利用`HashSet`实现去重操作
 - 结果见`Product/PopularItem` 及`Product/PopularMerchant`
 
 ### Spark实现
@@ -135,7 +135,11 @@ $ hdfs dfs -ls  /user/hann/input
   **Hint：** 解决Spark运行过程中很多输出的问题
 
   将`spark/conf/log4j.properties.example`拷贝到项目的`Source Root`下面并将`log4j.rootCategory`的参数由`INFO`改为`ERROR`(也可保留为`WARN`)重新运行就没有annoying的一大堆红色输出了（每次看到红色提示就算不是ERROR也会虎躯一震...）
-
+  
+- 数据处理及`Scala`程序设计逻辑同MapReduce
+- 其中收藏及加入购物车的去重操作使用两次map实现（可以使用`distinct`但由于数据集本身较大，书上说调用`distinct`会进行数据混洗，因此通过两次map实现）
+- RDD转化流程大致为：`filter`分别得到收藏/加入购物车的log数据，生成`((user_id,item/merchant_id),1)`的键值对并进行Reduce（利用计数进行聚合），再对去重之后的`item_id/merchant_id`进行reduceByKey即可
+- 结果见`ProductSpark/Top100Item` 及`ProductSpark/Top100Merchant`
 
 ## 双十一购买商品的男女比例，以及购买了商品的买家年龄段的比例
 
