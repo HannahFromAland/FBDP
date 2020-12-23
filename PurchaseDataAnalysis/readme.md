@@ -15,7 +15,7 @@
 
 ### MapReduce实现
 
-- 首先需要通过MapReduce实现用户行为日志和用户画像的`join`操作（)
+- 首先需要通过MapReduce实现用户行为日志和用户画像的`join`操作 [ReduceJoin](https://github.com/HannahFromAland/FBDP/blob/main/PurchaseDataAnalysis/Product/src/main/java/join/ReduceJoin.java)
 
 - `join`操作可以在Map端实现，也可以在Reduce端实现；Map端适合两表中有一个较小表，可以先将其读入缓存，再和另一张大表进行匹配,Reduce端操作集中于Reducer，容易造成数据倾斜（但数据集里`user_info`已经4.5MB了...于是选择Reduce端操作，并将有缺失值的数据作删除处理)
 - 处理后的文件预览
@@ -40,9 +40,9 @@ $ hdfs dfs -ls  /user/hann/input
 > - 假设同一用户的购买和添加购物车/收藏夹操作之间不产生重复影响
 > - 进一步优化方向（但因为感觉略不符合题意所以没实现hh只是对于该分析逻辑的想法）：对三种行为的计数进行加权，如`单次购买行为：单次添加购物车：单次添加收藏夹=50%：30%：20%`，可以有效区分被过多添加收藏夹/购物车的商品与购买次数多的商品之间的“受欢迎程度”
 
-- 使用两次MapReduce实现：第一次MapReduce实现去重和频率统计，第二次MapReduce进行频率倒排（源文件分别为`Product/src/main/java/PopularItem/AllItem` 以及`Product/src/main/java/PopularItem/PopMerYoung` 
+- 使用两次MapReduce实现：第一次MapReduce实现去重和频率统计，第二次MapReduce进行频率倒排（源文件分别为[AllItem](https://github.com/HannahFromAland/FBDP/blob/main/PurchaseDataAnalysis/Product/src/main/java/PopularItem/AllItem.java)以及[PopMerYoung](https://github.com/HannahFromAland/FBDP/blob/main/PurchaseDataAnalysis/Product/src/main/java/PopularItem/PopMerYoung.java)
 - 收藏+加入购物车对用户及对应商品和店铺利用`HashSet`实现去重操作
-- 结果见`Product/PopularItem` 及`Product/PopularMerchant`
+- 结果见[Product/PopularItem](https://github.com/HannahFromAland/FBDP/blob/main/PurchaseDataAnalysis/Product/PopularItem) 及[Product/PopularMerchant](https://github.com/HannahFromAland/FBDP/blob/main/PurchaseDataAnalysis/Product/PopularMerchant)
 
 ### Spark实现
 
@@ -139,7 +139,7 @@ $ hdfs dfs -ls  /user/hann/input
 - 数据处理及`Scala`程序设计逻辑同MapReduce
 - 其中收藏及加入购物车的去重操作使用两次map实现（可以使用`distinct`但由于数据集本身较大，书上说调用`distinct`会进行数据混洗，因此通过两次map实现）
 - RDD转化流程大致为：`filter`分别得到收藏/加入购物车的log数据，生成`((user_id,item/merchant_id),1)`的键值对并进行Reduce（利用计数进行聚合），再对去重之后的`item_id/merchant_id`进行reduceByKey即可
-- 结果见`ProductSpark/Top100Item` 及`ProductSpark/Top100Merchant`
+- 结果见[ProductSpark/Top100Item](https://github.com/HannahFromAland/FBDP/blob/main/PurchaseDataAnalysis/ProductSpark/Top100ItemSpark) 及[ProductSpark/Top100Merchant](https://github.com/HannahFromAland/FBDP/blob/main/PurchaseDataAnalysis/ProductSpark/Top100Merchant)
 
 ## Spark SQL
 
