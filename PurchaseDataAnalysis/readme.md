@@ -132,7 +132,7 @@ $ hdfs dfs -ls  /user/hann/input
 
   - 在项目的`src`文件夹内新建一个scala文件夹并右键`mark directory as source roots`，在此文件夹内新建`Scala Class`并选择`Object`即可开始编写Scala程序了~
 
-  **Hint：** 解决Spark运行过程中很多输出的问题 :blue_heart:
+ :blue_heart: **Hint：** 解决Spark运行过程中很多输出的问题 
 
   将`spark/conf/log4j.properties.example`拷贝到项目的`Source Root`下面并将`log4j.rootCategory`的参数由`INFO`改为`ERROR`(也可保留为`WARN`)重新运行就没有annoying的一大堆红色输出了（每次看到红色提示就算不是ERROR也会虎躯一震...）
   
