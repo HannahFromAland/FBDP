@@ -141,7 +141,85 @@ $ hdfs dfs -ls  /user/hann/input
 - RDD转化流程大致为：`filter`分别得到收藏/加入购物车的log数据，生成`((user_id,item/merchant_id),1)`的键值对并进行Reduce（利用计数进行聚合），再对去重之后的`item_id/merchant_id`进行reduceByKey即可
 - 结果见`ProductSpark/Top100Item` 及`ProductSpark/Top100Merchant`
 
-## 双十一购买商品的男女比例，以及购买了商品的买家年龄段的比例
+## Spark SQL
+
+### 查询双十一购买商品的男女比例
+
+```scala
+import org.apache.spark.sql.SparkSession
+
+object CustomerGender {
+  def main(args: Array[String]) = {
+    val spark = SparkSession.builder().master("local").appName("BrandViewTop10").getOrCreate()
+    import spark.implicits._
+    val df1= spark.read.csv("hdfs://localhost:9000/user/hann/user_log")
+    val df2= spark.read.csv("hdfs://localhost:9000/user/hann/user_info")
+    val col1 = Seq("user_id","item_id","cat_id","merchant_id","brand_id","time_stamp","action_type")
+    val col2 = Seq("user_id","age_range","gender")
+    val df_log = df1.toDF(col1 : _*)
+    val df_info = df2.toDF(col2 : _*)
+      // 1.定义连接表达式
+    val joinExpression = df_log.col("user_id") === df_info.col("user_id")
+      // 2.左外连接
+    val df_all = df_log.join(df_info, joinExpression, "left_outer").where("time_stamp = '1111' and action_type = '2' and gender in (0,1)" )
+    df_all.groupBy("gender").count().show()
+  }
+}
+```
+
+- 返回结果
+
+```bash
++------+------+
+|gender| count|
++------+------+
+|     0|846054|
+|     1|323725|
++------+------+
+# 323725/846054 = 0.38262924 与Hive查询结果一致
+```
+
+### 查询购买了商品的买家年龄段的比例
+
+```scala
+import org.apache.spark.sql.SparkSession
+
+object CustomerAge {
+  def main(args: Array[String]) = {
+    val spark = SparkSession.builder().master("local").appName("BrandViewTop10").getOrCreate()
+    import spark.implicits._
+    val df1= spark.read.csv("hdfs://localhost:9000/user/hann/user_log")
+    val df2= spark.read.csv("hdfs://localhost:9000/user/hann/user_info")
+    val col1 = Seq("user_id","item_id","cat_id","merchant_id","brand_id","time_stamp","action_type")
+    val col2 = Seq("user_id","age_range","gender")
+    val df_log = df1.toDF(col1 : _*)
+    val df_info = df2.toDF(col2 : _*)
+    val joinExpression = df_log.col("user_id") === df_info.col("user_id")
+    val df_all = df_log.join(df_info, joinExpression, "left_outer").where("time_stamp = '1111' and action_type = '2' and age_range in (1,2,3,4,5,6,7,8) and gender in (0,1)" )
+    df_all.groupBy("age_range").count().sort("age_range").show()
+  }
+}
+```
+
+- 返回结果
+
+```bash
++---------+------+
+|age_range| count|
++---------+------+
+|        1|    54|
+|        2|122476|
+|        3|314465|
+|        4|252285|
+|        5|127801|
+|        6|101901|
+|        7| 18868|
+|        8|  3323|
++---------+------+
+```
+
+
+## Hive
 
 - 首先配置`hive`并配置`MYSQL`作为元数据库
 
@@ -187,7 +265,7 @@ $ hdfs dfs -ls  /user/hann/input
   
   ```
 
-- 查询双十一当天购买的男女比例
+### 查询双十一当天购买的男女比例
 
 > 考虑去重问题：由于双十一当天购买总量是按照**购买次数**作为总数进行统计的，因此对同一用户进行的多次购买操作不应该去重（极端情况为仅有一男一女用户，分别购买3次和4次某商品，实际按照购买总数进行性别统计的比例应为3:4而不是1:1）
 > 
@@ -228,7 +306,7 @@ Time taken: 43.972 seconds, Fetched: 1 row(s)
 > ```
 >
 
-- 查询购买商品买家年龄段的比例
+### 查询购买商品买家年龄段的比例
 
 ```bash
 hive> select c.age_range, count(user_id)
