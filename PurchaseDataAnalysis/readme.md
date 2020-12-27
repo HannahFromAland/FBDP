@@ -36,7 +36,8 @@ $ hdfs dfs -ls  /user/hann/input
 > 需要考虑的去重问题：
 >
 > - 由于购买应该是商品受欢迎程度最重要的决定因素，同一用户多次重复购买特定商品也是表明商品受欢迎程度的影响因素而非噪音，因此对购买操作仅进行计数处理（即不需要对同一用户多次操作进行去重）
-> - 而添加购物车和收藏夹的动作对同一用户来说多次进行是没有任何特殊业务意义（多次操作甚至在某种程度上代表购买欲望不强因此出现多次删除又加入购物车/收藏夹的情况x），因此决定对添加购物车和添加收藏夹的用户操作进行去重处理
+> - 而多次添加收藏夹的操作对用户和对应商品吸引力之间的业务意义判定较弱，且可能存在负面效果（某种程度上代表购买欲望不强因此出现多次删除又加入收藏夹的情况），因此决定对添加收藏夹的用户操作进行去重处理
+> - 多次添加购物车则存在更多种可能的情形和解读方式（比如有用户单纯把购物车和收藏夹当做同一种用途，而另一种则是每次购买都会先添加购物车再结算），但若通过ROI进行判断，多次添加购物车和收藏夹的操作都不会给商家带来更多回报，因此最终选择进行去重处理
 > - 假设同一用户的购买和添加购物车/收藏夹操作之间不产生重复影响
 > - 进一步优化方向（但因为感觉略不符合题意所以没实现hh只是对于该分析逻辑的想法）：对三种行为的计数进行加权，如`单次购买行为：单次添加购物车：单次添加收藏夹=50%：30%：20%`，可以有效区分被过多添加收藏夹/购物车的商品与购买次数多的商品之间的“受欢迎程度”
 
@@ -338,4 +339,143 @@ Time taken: 93.262 seconds, Fetched: 8 row(s)
 
 - 比例结果如下
 ![双十一消费者年龄分布.png](https://i.loli.net/2020/12/21/yVwqNKpvck7sm5t.png)
+
+## 预测回头客
+
+### 数据预处理
+
+- 首先对测试集中`label`进行去空处理，合并`user_info`并查看缺失值个数
+
+```bash
+(0,260864) #user_id
+(0,260864) #merchant_id
+(0,260864) # label
+(1253,260864) #age_range
+(3711,260864) #gender
+```
+
+- **去除缺失值：**考虑到数据集中能够表征用户信息的只有这两个变量，如果盲目采取各类缺失值填充方式都可能会对数据集的训练效果产生过大的影响，首先想到直接删除有缺失的数据，但是删除后发现有效数据仅剩196411（心痛），决定先使用该结果进行训练
+
+> 网上求索时发现的一种不用改变数据原始特征形态的缺失值处理方法，马住。![image.png](https://i.loli.net/2020/12/25/npbjGgJIezEruZd.png)
+>
+> 出处：[机器学习中如何处理缺失数据](https://www.zhihu.com/question/26639110)
+
+- 利用`user_log`进行特征工程构建
+
+- 想要添加的特征：
+
+  - 从用户侧考虑：
+  
+- **用户在该商家购买的次数**：是最直接的特征，由于每次购买均有成本且表明用户的强烈回购意愿，因此采用绝对数值作为特征值
+  - 用户添加该商家商品入购物车的次数/该用户全部加入购物车的操作次数（同理构建加入收藏夹的特征及点击的特征）：将成本较低的几类操作行为对应商家所占比例用来表征用户对该商家商品的关注度，为避免各个用户使用习惯和操作的差异，取其对该商户进行的关注操作占其总关注行为的比例作为特征值
+  - 用户在商家复购的种类：需要注意的是，预测回头客行为是基于目前所给定的全部用户数据对下一次行为进行预测（即对进行n次购物`n>=1`的用户的`n+1`次行为进行预测，所以用户在商家复购的种类越多，复购的商品种类越多，复购概率越大
+  
+- 从商家侧考虑：
+
+  - 商家提供商品的种类数（商品种类越多，用户复购的选择空间越大，且可以与用户侧复购种类指标结合判断用户对商家的信任程度）
+  - 商家直接竞争者个数（售卖同品牌同种类商品的商家个数）
+  - 商家对应的消费者画像（年龄及性别）：使用用户数据与商家对应画像之间的差额来作为特征值
+
+### 特征工程构建
+- 利用Spark SQL进行特征工程构建（过程及其麻烦且出现很多意想不到的情况，果然90%的时间都用在特征工程。。）
+  - 处理过程见`trainFeatureAdd` 以及`finalFeature`，此处mark几个常用到的操作
+
+  ```scala
+  // join
+  val title_add1 = df_title.join(re_pur, df_title.col("user_id") === re_pur.col("user_id") and
+        df_title.col("merchant_id") === re_pur.col("merchant_id"), "left_outer").select(df_title("user_id"),
+        df_title("merchant_id"), re_pur("count").as("pur"))
+  // count missing value
+  val columns=test_info.columns
+  val missing_cnt=columns.map(x=>test_info.select(col(x))
+                              .where(col(x).isNull).count)
+  missing_cnt.foreach(println)
+  
+  // filling missing values with exact value
+  val tmp5 = tmp4.na.fill(0)
+  
+  // filling missing values with column average
+  val c2 = c1.withColumn("click_fill", when($"click".isNull, c1.select(mean("click"))
+        .first()(0).asInstanceOf[Double])
+        .otherwise($"click"))
+  
+  // add new column from existing calculation
+  val mean_mer = res51.groupBy("merchant_id")
+  .agg(avg("age_range").as("mean_age"), avg("gender")
+       .as("mean_gender")).show()
+  
+  
+  ```
+
+  
+
+  - 最终构建出的特征工程数据集结构：
+
+![image.png](https://i.loli.net/2020/12/26/uvCNGXsmMQeg5AJ.png)
+
+### ML训练及模型选择
+
+选择ML库进行训练（觉得pipeline好玩所以想尝试一下，但是发现单纯调用分类器在本题中好像不需要pipeline，于是在挑选分类器时直接调用了模型，后面使用交叉验证时才用上心心念念的pipeline）
+
+具体代码见`TrainMl`
+
+- **LogisticRegression:**
+
+```scala
+------------------------LogisticRegression---------------------------
+
+Accuracy: 0.938821070018324
+weightedPrecision: 0.8813850015103508
+weightedRecall: 0.938821070018324
+areaUnderROC: 0.5
+areaUnderPR: 0.530589464990838
+
+```
+
+AUC的结果真的是差到惊人...于是尝试使用5折交叉验证改进一下结果
+
+```scala
+------------------------CV: LogisticRegression---------------------------
+
+Accuracy: 0.9376287791413428
+weightedPrecision: 0.8792183605350958
+weightedRecall: 0.9376287791413428
+areaUnderROC: 0.6027514632991644
+areaUnderPR: 0.10143564602283778
+BestRegParam:0.01
+```
+
+- RandomForest
+
+```scala
+------------------------RandomForest---------------------------
+
+Accuracy: 0.9373279749828782
+weightedPrecision: 0.8785837326855032
+weightedRecall: 0.9373279749828782
+areaUnderROC: 0.6241610403165713
+areaUnderPR: 0.10948325671524473
+```
+
+使用5折交叉验证训练RandomForest
+
+```scala
+------------------------CV: RandomForest---------------------------
+
+Accuracy: 0.9396066322426633
+weightedPrecision: 0.8828842681155552
+weightedRecall: 0.9396066322426633
+areaUnderROC: 0.6346419331989969
+areaUnderPR: 0.10854576073190937
+BestMaxDepth:10
+BestNumTrees:20
+```
+- 使用随机森林对testdata进行测试，最终得分为`score:0.6229398`
+
+>[Spark ML机器学习库评估指标示例](https://zhuanlan.zhihu.com/p/110664865)
+>[决策树分类器 -- spark.ml](http://mocom.xmu.edu.cn/article/show/58667ae3aa2c3f280956e7b0/0/1)
+>[海内存知己的debug，不得不说Stack Overflow yyds](https://stackoverflow.com/questions/64114103/spark-illegalargumentexception-column-features-must-be-of-type-structtypetiny)
+>[park ML Pipeline模型选择及超参数评估调优深入剖析 -Spark商业ML实战](https://blog.csdn.net/shenshouniu/article/details/84197012)
+>[将预测结果转为string并输出到csv](https://stackoverflow.com/questions/40426106/spark-2-0-x-dump-a-csv-file-from-a-dataframe-containing-one-array-of-type-string%20%22here%22%20on%20Stackoverflow)
+
 
